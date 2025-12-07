@@ -14,9 +14,9 @@ export class AuthService{
         try{
             const user=await this.account.create({
                 userId:ID.unique(),
-                email:"@gmail.com",
-                password:"**********",
-                name:"."
+                email,
+                password,
+                name
             });
             console.log(user)
         }catch (e){
@@ -26,7 +26,7 @@ export class AuthService{
 
     async login({email,password}){
         try{
-            return await this.account.createEmailPasswordSession({email,password});
+            return await this.account.createEmailPasswordSession(email,password);
         } catch (error){
             throw error;
         }

@@ -45,14 +45,14 @@ function Signup(){
                             <Input label="Full Name:" placeholder="" {...register("name",{
                                 required:true,
                             })}/>
-                            <input label="email" placeholder="" type="email" {...required("email",{
+                            <Input label="email" placeholder="" type="email" {...register("email",{
                                 required:true,
                                 validate:{
                                      matchPatern: (value) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
                                     "Email address must be a valid address",
                                 }
                             })}/>
-                            <input label="password" type="password" placeholder="" {...register("password",{
+                            <Input label="password" type="password" placeholder="" {...register("password",{
                                 required:true
                             })}/>
                             <Button type="sumbit" className="w-full">creatAccount</Button>

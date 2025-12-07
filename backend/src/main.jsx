@@ -11,7 +11,7 @@ import Signup from './pages/Signup.jsx'
 import AllPost from './pages/AllPosts.jsx'
 import EditPost from './pages/EditPost.jsx'
 import AddPost from './pages/AddPost.jsx'
-
+import Post from './pages/Post.jsx'
 const router=createBrowserRouter([
   { path:'/',
     element:<App/>,
@@ -60,7 +60,7 @@ const router=createBrowserRouter([
     },
     {
       path:'/post/:slug',
-      element:<post/>
+      element:<Post/>
 
 
     }
@@ -70,7 +70,7 @@ const router=createBrowserRouter([
 ])
 
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
     <RouterProvider router={router}/>

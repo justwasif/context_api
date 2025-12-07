@@ -25,5 +25,5 @@ function Select({
     </div>
   )
 }
-export default forwardRef(select)
+export default forwardRef(Select)
 

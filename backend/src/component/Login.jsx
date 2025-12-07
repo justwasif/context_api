@@ -48,7 +48,7 @@ function Login() {
         {error && <p className='text-red-600 mt-8 text-center'>{error}</p>}
         <form onSubmit={handleSubmit(login)} className='mt-8'>
             <div className='space-y-5'>
-                <input
+                <Input
                  label="Email:" 
                  placeholder='EMAIL' 
                  type='email' {...register("email",{
@@ -58,7 +58,7 @@ function Login() {
                         "Email address must be a valid address",
                     }
                  })}/>
-                 <input label="password:" type="password" placeholder='pass' {...register("password",{
+                 <Input label="password:" type="password" placeholder='pass' {...register("password",{
                     required:true,
 
                  })}/>

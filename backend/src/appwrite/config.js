@@ -1,5 +1,5 @@
 import conf from "../conf/conf";
-import { Client, ID, TablesDB, Storage, Query } from "appwrite";
+import { Client, ID, Databases, Storage, Query } from "appwrite";
 
 export class Service {
     client = new Client();
@@ -10,14 +10,14 @@ export class Service {
             .setProject(conf.appwriteprojectid);
 
         // This is actually TablesDB, not Databases
-        this.tables = new TablesDB(this.client);
+        this.databases = new Databases(this.client);
         this.bucket = new Storage(this.client);
     }
 
     // also fixed: creatPost -> createPost, uderid -> userId
     async createPost({ title, slug, content, featuredImage, status, userId }) {
         try {
-            return await this.tables.createRow({
+            return await this.databases.createDocument({
                 databaseId: conf.appwritedatabaseid,
                 tableId: conf.appwritecollecionid,
                 rowId: slug,               // or ID.unique() if you don’t want slug as ID
@@ -37,7 +37,7 @@ export class Service {
 
     async updatePost(slug, { title, content, featuredImage, status }) {
         try {
-            return await this.tables.updateRow({
+            return await this.databases.updateDocument({
                 databaseId: conf.appwritedatabaseid,
                 tableId: conf.appwritecollecionid,
                 rowId: slug,
@@ -56,7 +56,7 @@ export class Service {
     }
     async deletepost(slug){
         try{
-            await this.tables.deleteRow({
+            await this.databases.deleteDocument({
                 databaseId:conf.appwritedatabaseid,
                 tableId:conf.appwritecollecionid,
                 rowId:slug,
@@ -69,7 +69,7 @@ export class Service {
     }
     async getpost(slug){
         try{
-            return await this.tables.getRow({
+            return await this.databases.getDocument({
                 databaseId:conf.appwritedatabaseid,
                 tableId:conf.appwritecollecionid,
                 rowId:slug,
@@ -83,7 +83,7 @@ export class Service {
     }
     async getposts(queries=[Query.equal("index_1","active")]){
         try{
-            return await this.tables.listRows({
+            return await this.databases.listDocuments({
                 databaseId:conf.appwritedatabaseid,
                 tableId:conf.appwritecollecionid,
                 queries,
@@ -110,7 +110,7 @@ export class Service {
 
     async deleteFile(fileId){
         try{
-            await this.bucket.this.deleteFile(
+            await this.bucket.deleteFile(
                 conf.appwritebucketid,
                 fileId
             );
@@ -121,7 +121,7 @@ export class Service {
         }
     }
     getfilepreview(fileId){
-        return this.bucket.getfilepreview(
+        return this.bucket.getFilepreview(
             conf.appwritebucketid,
             fileId
         )

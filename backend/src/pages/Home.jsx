@@ -4,7 +4,7 @@ import { Container,PostCard } from "../component"
 
 function Home(){
     const [posts,setposts]=useState([])
-    useEffect(()={
+    useEffect(()=>{
         appwriteService.getPosts().then((posts)=>{
             if(posts){
                 setposts(posts.documents)
