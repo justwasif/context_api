@@ -3,110 +3,110 @@ import { Client, ID, Databases, Storage, Query } from "appwrite";
 
 export class Service {
     client = new Client();
+    databases;
+    bucket;
 
     constructor() {
         this.client
             .setEndpoint(conf.appwriteurl)
             .setProject(conf.appwriteprojectid);
-
-        // This is actually TablesDB, not Databases
         this.databases = new Databases(this.client);
         this.bucket = new Storage(this.client);
     }
 
-    // also fixed: creatPost -> createPost, uderid -> userId
     async createPost({ title, slug, content, featuredImage, status, userId }) {
         try {
             return await this.databases.createDocument({
                 databaseId: conf.appwritedatabaseid,
-                tableId: conf.appwritecollecionid,
-                rowId: slug,               // or ID.unique() if you don’t want slug as ID
+                collectionId: conf.appwritecollecionid,
+                documentId : ID.unique(),
                 data: {
-                    title,
-                    content,
-                    featuredImage,
-                    status,
-                    userId,
-                },
-                // permissions: [...]  // optional, depends on how you set table perms
+                    TITLE:title,
+                    CONTENT:content,
+                    SLUG:slug,
+                    IMAGE: featuredImage,
+                    STATUS:status,
+                    USER_ID:userId,
+                }
             });
         } catch (error) {
+            console.log("Appwrite service :: createPost :: error", error);
             throw error;
         }
     }
 
     async updatePost(slug, { title, content, featuredImage, status }) {
         try {
-            return await this.databases.updateDocument({
-                databaseId: conf.appwritedatabaseid,
-                tableId: conf.appwritecollecionid,
-                rowId: slug,
-                data: {
-                    title,
-                    content,
-                    featuredImage,
-                    status,
-                },
-                // permissions: [...] // optional
-            });
+            return await this.databases.updateDocument(
+                conf.appwritedatabaseid,
+                conf.appwritecollecionid,
+                slug,
+                {
+                    TITLE:title,
+                    CONTENT:content,
+                    IMAGE:featuredImage,
+                    STATUS:status,
+                    SLUG:slug,
+                }
+            );
         } catch (error) {
-            throw error;
-            return false
+            console.log("Appwrite service :: updatePost :: error", error);
+            return false;
         }
     }
-    async deletepost(slug){
+
+    async deletePost(slug){
         try{
-            await this.databases.deleteDocument({
-                databaseId:conf.appwritedatabaseid,
-                tableId:conf.appwritecollecionid,
-                rowId:slug,
-            });
+            await this.databases.deleteDocument(
+                conf.appwritedatabaseid,
+                conf.appwritecollecionid,
+                slug
+            );
             return true;
         } catch(error){
             console.log("Appwrite service :: deletePost :: error", error);
             return false;
         }
     }
-    async getpost(slug){
-        try{
-            return await this.databases.getDocument({
-                databaseId:conf.appwritedatabaseid,
-                tableId:conf.appwritecollecionid,
-                rowId:slug,
-            });
 
-        }catch (error) {
-            console.log("Appwrite serive :: getPost :: error", error);
+    async getPost(slug){
+        try{
+            return await this.databases.getDocument(
+                conf.appwritedatabaseid,
+                conf.appwritecollecionid,
+                slug
+            );
+        } catch (error) {
+            console.log("Appwrite service :: getPost :: error", error);
             return false;
         }
-
     }
-    async getposts(queries=[Query.equal("index_1","active")]){
+
+    async getPosts(queries = [Query.equal("status", "active")]){
         try{
-            return await this.databases.listDocuments({
-                databaseId:conf.appwritedatabaseid,
-                tableId:conf.appwritecollecionid,
-                queries,
-            });
-        }catch (error){
-            console.log("Appwrite serive :: getPosts :: error", error);
+            return await this.databases.listDocuments(
+                conf.appwritedatabaseid,
+                conf.appwritecollecionid,
+                queries
+            );
+        } catch (error){
+            console.log("Appwrite service :: getPosts :: error", error);
             return false;
         }
-
     }
-    async uplodefile(file){
+
+    async uploadFile(file){
         try{
             return await this.bucket.createFile(
-            conf.appwritebucketid,
-            ID.unique(),
-            file
-        );
-    }catch(error){
-        console.log("Appwrite serive :: uploadFile :: error", error);
-        return false;
+                conf.appwritebucketid,
+                ID.unique(),
+                file
+            );
+        } catch(error){
+            console.log("Appwrite service :: uploadFile :: error", error);
+            return false;
         }
     }
-       
 
     async deleteFile(fileId){
         try{
@@ -115,18 +115,19 @@ export class Service {
                 fileId
             );
             return true;
-        }catch(error){
-            console.log("Appwrite serive :: deleteFile :: error", error);
+        } catch(error){
+            console.log("Appwrite service :: deleteFile :: error", error);
             return false;
         }
     }
-    getfilepreview(fileId){
-        return this.bucket.getFilepreview(
+
+    getFilePreview(fileId){
+        return this.bucket.getFilePreview(
             conf.appwritebucketid,
             fileId
-        )
+        );
     }
-
 }
+
 const service = new Service();
 export default service

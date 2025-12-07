@@ -1,47 +1,55 @@
-import React ,{useEffect,useState} from "react";
-import appwriteService from "../appwrite/config"
-import { Container,PostCard } from "../component"
+import React, { useEffect, useState } from "react";
+import appwriteService from "../appwrite/config";
+import { Container, PostCard } from "../component";
 
-function Home(){
-    const [posts,setposts]=useState([])
-    useEffect(()=>{
-        appwriteService.getPosts().then((posts)=>{
-            if(posts){
-                setposts(posts.documents)
+function Home() {
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        appwriteService.getPosts().then((posts) => {
+            if (posts) {
+                setPosts(posts.documents);
             }
         })
-    },[])
-    if(posts.length===0){
-        return(
+        .finally(() => setLoading(false));
+    }, []);
+
+    if (loading) {
+        return (
             <div className="w-full py-8 mt-4 text-center">
                 <Container>
-                    <div className="flex flex-wrap">
-                        <div className="p-2 w-full">
-                            <h1 className="text-2xl font-bold hover:text-gray-500">
-                                login to read posts
-
-                            </h1>
-                        </div>
-                    </div>
+                    <h1 className="text-2xl font-bold">Loading...</h1>
                 </Container>
             </div>
-        )
+        );
     }
-    return(
+
+    if (!loading && posts.length === 0) {
+        return (
+            <div className="w-full py-8 mt-4 text-center">
+                <Container>
+                    <h1 className="text-2xl font-bold hover:text-gray-500">
+                        Login to read posts
+                    </h1>
+                </Container>
+            </div>
+        );
+    }
+
+    return (
         <div className="w-full py-8">
             <Container>
-                <div>
-                    {posts.map((posts)=>{
-                        <div key={posts.$id} className="p-2 w-1/4">
-                            <PostCard {...posts}/>
-                            </div>
-                    })}
+                <div className="flex flex-wrap">
+                    {posts.map((post) => (
+                        <div key={post.$id} className="p-2 w-1/4">
+                            <PostCard {...post} />
+                        </div>
+                    ))}
                 </div>
             </Container>
         </div>
-    )
-
-    
-
+    );
 }
-export default Home
+
+export default Home;
